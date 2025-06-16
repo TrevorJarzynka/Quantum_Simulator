@@ -1,0 +1,339 @@
+/* src/components/simulation/QiskitCode/QiskitCode.module.css */
+/* Modern code display with syntax highlighting effect */
+
+.container {
+    margin-top: var(--spacing-6);
+    margin-bottom: var(--spacing-6);
+    animation: slideUp var(--duration-normal) var(--easing-ease);
+  }
+  
+  .title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-neutral-900);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  
+  .title::before {
+    content: '💻';
+    font-size: 1rem;
+  }
+  
+  .codeBlock {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-2xl);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-xl);
+    max-height: 500px;
+    overflow-y: auto;
+    position: relative;
+    white-space: pre;
+  }
+  
+  .codeBlock::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6 0%, #10b981 50%, #f59e0b 100%);
+    border-radius: var(--radius-full);
+  }
+  
+  /* Syntax highlighting effect with CSS */
+  .codeBlock {
+    background-image: 
+      linear-gradient(135deg, #1e293b 0%, #0f172a 100%),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 4ch,
+        rgba(59, 130, 246, 0.05) 4ch,
+        rgba(59, 130, 246, 0.05) 8ch
+      );
+  }
+  
+  /* Simulate syntax highlighting for common Python keywords */
+  .codeBlock {
+    background-attachment: local, scroll;
+  }
+  
+  .copyButton {
+    padding: var(--spacing-3) var(--spacing-5);
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-top: var(--spacing-4);
+    transition: all var(--duration-normal) var(--easing-ease);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .copyButton::before {
+    content: '📋';
+    font-size: 1rem;
+  }
+  
+  .copyButton:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-500) 100%);
+  }
+  
+  .copyButton:active {
+    transform: translateY(0);
+  }
+  
+  .copyButton:focus {
+    outline: none;
+    box-shadow: var(--shadow-lg), 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+  
+  .copyButtonSuccess {
+    background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+  }
+  
+  .copyButtonSuccess::before {
+    content: '✅';
+  }
+  
+  .codeHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(8px);
+  }
+  
+  .codeLanguage {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-neutral-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  
+  .codeLanguage::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #3776ab; /* Python blue */
+    border-radius: var(--radius-full);
+    box-shadow: 0 0 8px rgba(55, 118, 171, 0.4);
+  }
+  
+  .codeStats {
+    display: flex;
+    gap: var(--spacing-4);
+    font-size: 0.75rem;
+    color: var(--color-neutral-500);
+  }
+  
+  .codeStat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  
+  .codeWrapper {
+    position: relative;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: var(--radius-2xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+  }
+  
+  .lineNumbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    background: rgba(0, 0, 0, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-neutral-500);
+    padding: var(--spacing-6) var(--spacing-2);
+    counter-reset: line;
+    user-select: none;
+  }
+  
+  .lineNumbers::before {
+    content: counter(line);
+    counter-increment: line;
+    display: block;
+    line-height: 1.6;
+  }
+  
+  .codeContent {
+    padding-left: 60px;
+    min-height: 100px;
+  }
+  
+  .expandButton {
+    position: absolute;
+    bottom: var(--spacing-4);
+    right: var(--spacing-4);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--easing-ease);
+    backdrop-filter: blur(8px);
+  }
+  
+  .expandButton:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+  
+  .expanded {
+    max-height: none;
+  }
+  
+  .downloadButton {
+    padding: var(--spacing-2) var(--spacing-4);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all var(--duration-normal) var(--easing-ease);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  
+  .downloadButton::before {
+    content: '⬇️';
+    font-size: 0.875rem;
+  }
+  
+  .downloadButton:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  /* Custom scrollbar for code block */
+  .codeBlock::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .codeBlock::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-full);
+  }
+  
+  .codeBlock::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-full);
+  }
+  
+  .codeBlock::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .codeBlock {
+      padding: var(--spacing-4);
+      font-size: 0.75rem;
+      max-height: 300px;
+    }
+    
+    .codeHeader {
+      flex-direction: column;
+      gap: var(--spacing-2);
+      align-items: flex-start;
+    }
+    
+    .copyButton {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .lineNumbers {
+      width: 40px;
+    }
+    
+    .codeContent {
+      padding-left: 50px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .codeBlock {
+      padding: var(--spacing-3);
+      font-size: 0.6875rem;
+    }
+    
+    .title {
+      font-size: 1rem;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .codeWrapper {
+      border: 2px solid var(--color-neutral-400);
+    }
+    
+    .codeBlock {
+      background: #000000;
+      color: #ffffff;
+    }
+  }
+  
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .container {
+      animation: none;
+    }
+    
+    .copyButton,
+    .downloadButton,
+    .expandButton {
+      transition: none;
+    }
+    
+    .copyButton:hover,
+    .downloadButton:hover {
+      transform: none;
+    }
+  }

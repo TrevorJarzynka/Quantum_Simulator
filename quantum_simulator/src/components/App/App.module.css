@@ -1,0 +1,116 @@
+/* src/components/App/App.module.css */
+.container {
+  @apply min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800;
+  @apply flex flex-col max-w-[var(--container-max-width)] mx-auto p-6 gap-8;
+}
+
+.header {
+  @apply bg-white/10 dark:bg-gray-800/50 backdrop-blur-lg border border-white/20 rounded-2xl;
+  @apply p-6 flex justify-between items-center sticky top-6 z-50;
+  @apply shadow-lg transition-all duration-300;
+}
+
+.title {
+  @apply text-3xl font-bold text-gray-900 dark:text-white;
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+.controls {
+  @apply flex items-center gap-4;
+}
+
+.qubitSelector {
+  @apply flex items-center gap-3 bg-white/10 dark:bg-gray-700/50;
+  @apply border border-white/20 rounded-lg p-3 backdrop-blur-sm;
+}
+
+.qubitSelector label {
+  @apply font-semibold text-sm text-gray-700 dark:text-gray-200 uppercase;
+}
+
+.qubitSelector select {
+  @apply bg-white/90 dark:bg-gray-700 border-none rounded-lg;
+  @apply px-4 py-2 font-semibold text-gray-800 dark:text-gray-100;
+  @apply transition-all duration-200;
+}
+
+.qubitSelector select:hover {
+  @apply bg-white dark:bg-gray-600 transform -translate-y-0.5 shadow-md;
+}
+
+.mainContent {
+  @apply grid grid-cols-[var(--sidebar-width)_1fr] gap-8 w-full;
+}
+
+.gatePaletteSection {
+  @apply sticky top-32;
+}
+
+.circuitSection {
+  @apply col-span-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg;
+  @apply border border-white/30 rounded-2xl p-8 shadow-xl;
+  @apply transition-all duration-300;
+}
+
+.circuitTitle {
+  @apply text-2xl font-bold text-gray-900 dark:text-white mb-6;
+  @apply flex items-center gap-3;
+}
+
+.circuitTitle::before {
+  @apply content-[''] w-1 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full;
+}
+
+.visualizationSection {
+  @apply col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.panel {
+  @apply bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border border-white/30;
+  @apply rounded-xl p-6 shadow-md transition-all duration-300;
+}
+
+.panel:hover {
+  @apply transform -translate-y-1 shadow-lg;
+}
+
+.panelTitle {
+  @apply text-xl font-semibold text-gray-900 dark:text-white mb-4;
+}
+
+.errorMessage {
+  @apply bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700;
+  @apply rounded-lg p-4 mb-6 text-red-600 dark:text-red-400 font-semibold;
+  @apply flex items-center gap-3;
+}
+
+.errorMessage::before {
+  @apply content-['⚠️'] text-lg;
+}
+
+@media (max-width: 1024px) {
+  .mainContent {
+    @apply grid-cols-1 gap-6;
+  }
+  .gatePaletteSection {
+    @apply static order-2;
+  }
+  .circuitSection {
+    @apply col-span-1 order-1;
+  }
+  .visualizationSection {
+    @apply order-3;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    @apply p-4;
+  }
+  .header {
+    @apply flex-col gap-4;
+  }
+  .title {
+    @apply text-2xl;
+  }
+}

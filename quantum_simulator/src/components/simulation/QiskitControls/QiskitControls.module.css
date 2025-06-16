@@ -1,0 +1,373 @@
+/* src/components/simulation/QiskitControls/QiskitControls.module.css */
+/* Modern Qiskit integration controls */
+
+.container {
+    margin-bottom: var(--spacing-6);
+    padding: var(--spacing-6);
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.05) 0%, rgba(142, 68, 173, 0.05) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: var(--radius-2xl);
+    animation: slideUp var(--duration-normal) var(--easing-ease);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%);
+    border-radius: var(--radius-full);
+  }
+  
+  .title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-neutral-900);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  
+  .title::before {
+    content: '🚀';
+    font-size: 1rem;
+  }
+  
+  .qiskitOption {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    padding: var(--spacing-3);
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-xl);
+    transition: all var(--duration-normal) var(--easing-ease);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .qiskitOption:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .qiskitOption input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-neutral-300);
+    border-radius: var(--radius-base);
+    background: white;
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--easing-ease);
+    position: relative;
+    margin: 0;
+    margin-right: var(--spacing-3);
+  }
+  
+  .qiskitOption input[type="checkbox"]:checked {
+    border-color: #9b59b6;
+    background: #9b59b6;
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.3);
+  }
+  
+  .qiskitOption input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  
+  .qiskitOption input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2);
+  }
+  
+  .qiskitOption label {
+    font-weight: 500;
+    color: var(--color-neutral-800);
+    cursor: pointer;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  
+  .qiskitOption label::after {
+    content: 'Enable cloud quantum computing';
+    font-size: 0.75rem;
+    color: var(--color-neutral-600);
+    font-weight: 400;
+    margin-left: auto;
+  }
+  
+  .backendSelector {
+    margin-top: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all var(--duration-normal) var(--easing-ease);
+  }
+  
+  .backendSelectorVisible {
+    opacity: 1;
+    max-height: 200px;
+  }
+  
+  .backendSelector label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: var(--spacing-2);
+    color: var(--color-neutral-800);
+    font-size: 0.875rem;
+  }
+  
+  .styledSelect {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--color-neutral-300);
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+    color: var(--color-neutral-800);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--easing-ease);
+    backdrop-filter: blur(8px);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5rem 1.5rem;
+    padding-right: 2.5rem;
+  }
+  
+  .styledSelect:focus {
+    outline: none;
+    border-color: #9b59b6;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+  }
+  
+  .styledSelect:hover {
+    border-color: rgba(155, 89, 182, 0.5);
+    background: white;
+  }
+  
+  .generateCodeButton {
+    padding: var(--spacing-3) var(--spacing-6);
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all var(--duration-normal) var(--easing-ease);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  
+  .generateCodeButton::before {
+    content: '⚡';
+    font-size: 1rem;
+  }
+  
+  .generateCodeButton:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, #8e44ad 0%, #732d91 100%);
+  }
+  
+  .generateCodeButton:active {
+    transform: translateY(0);
+  }
+  
+  .generateCodeButton:disabled {
+    background: var(--color-neutral-400);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .generateCodeButton:focus {
+    outline: none;
+    box-shadow: var(--shadow-lg), 0 0 0 3px rgba(155, 89, 182, 0.3);
+  }
+  
+  .errorMessage {
+    color: var(--color-error);
+    margin-top: var(--spacing-3);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: var(--spacing-3);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    animation: slideUp var(--duration-normal) var(--easing-ease);
+  }
+  
+  .errorMessage::before {
+    content: '⚠️';
+    font-size: 1rem;
+  }
+  
+  .backendInfo {
+    margin-top: var(--spacing-3);
+    padding: var(--spacing-3);
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    color: var(--color-neutral-600);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .backendStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    margin-left: var(--spacing-2);
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .statusOnline {
+    color: var(--color-success);
+  }
+  
+  .statusOffline {
+    color: var(--color-error);
+  }
+  
+  .statusOnline::before,
+  .statusOffline::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+  }
+  
+  .statusOnline::before {
+    animation: pulse 2s infinite;
+  }
+  
+  .featureList {
+    margin-top: var(--spacing-4);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-3);
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    color: var(--color-neutral-700);
+  }
+  
+  .feature::before {
+    content: '✨';
+    font-size: 0.875rem;
+  }
+  
+  /* Loading states */
+  .loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  
+  .loading .generateCodeButton {
+    background: var(--color-neutral-400);
+    cursor: not-allowed;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .container {
+      padding: var(--spacing-4);
+    }
+    
+    .title {
+      font-size: 1rem;
+    }
+    
+    .qiskitOption {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-2);
+    }
+    
+    .qiskitOption label::after {
+      margin-left: 0;
+      margin-top: var(--spacing-1);
+    }
+    
+    .featureList {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .generateCodeButton {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .styledSelect {
+      max-width: 100%;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .container {
+      border: 2px solid #9b59b6;
+    }
+    
+    .qiskitOption input[type="checkbox"] {
+      border: 3px solid var(--color-neutral-600);
+    }
+  }
+  
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .container,
+    .qiskitOption,
+    .backendSelector,
+    .generateCodeButton {
+      transition: none;
+    }
+    
+    .qiskitOption:hover,
+    .generateCodeButton:hover {
+      transform: none;
+    }
+    
+    .statusOnline::before {
+      animation: none;
+    }
+  }
