@@ -1,144 +1,178 @@
-/* src/components/circuit/CircuitEditor/CircuitEditor.module.css */
 .circuitGrid {
-  @apply flex flex-col gap-2 overflow-x-auto p-4;
-  @apply bg-white/80 dark:bg-gray-800/80 rounded-2xl border border-white/20 shadow-sm;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding: var(--space-3);
+  background: #1a1a1a;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-dark-md);
+  transition: all var(--duration-normal) var(--ease-apple);
+}
+
+.circuitGrid:hover {
+  box-shadow: var(--shadow-dark-lg);
 }
 
 .qubitRow {
-  @apply flex items-center h-16 relative;
+  display: flex;
+  align-items: center;
+  height: 70px; /* Adjusted to accommodate 60px buttons + padding */
 }
 
 .qubitLabel {
-  @apply w-16 h-16 flex items-center justify-center;
-  @apply font-semibold text-sm bg-gradient-to-br from-blue-500 to-indigo-600 text-white;
-  @apply rounded-lg mr-4 shadow-md border-2 border-white/20;
-  @apply transition-all duration-200;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  background: linear-gradient(135deg, var(--color-accent-blue) 0%, #0056d6 100%);
+  color: white;
+  border-radius: var(--radius-lg);
+  margin-right: var(--space-3);
+  box-shadow: var(--shadow-dark-sm);
+  transition: all var(--duration-normal) var(--ease-apple);
 }
 
 .qubitLabel:hover {
-  @apply transform scale-105 shadow-lg;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-dark-md);
 }
 
 .wireRow {
-  @apply flex flex-grow h-16 items-center relative;
+  display: flex;
+  flex-grow: 1;
+  height: 70px; /* Adjusted to accommodate 60px buttons + padding */
+  align-items: center;
+  position: relative;
 }
 
 .wireRow::after {
-  @apply content-[''] absolute top-1/2 left-0 right-0 h-0.5;
-  @apply bg-gradient-to-r from-blue-400 via-blue-300 to-blue-400;
-  @apply rounded-full opacity-80 z-10;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 122, 255, 0.7), var(--color-accent-blue));
+  border-radius: var(--radius-full);
 }
 
 .cellContainer {
-  @apply grid grid-cols-[repeat(auto-fill,64px)] gap-1 flex-grow h-full relative z-20;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 60px); /* Match gate button size */
+  gap: var(--space-1);
+  flex-grow: 1;
 }
 
 .cell {
-  @apply w-16 h-16 flex items-center justify-center cursor-pointer;
-  @apply rounded-lg transition-all duration-200;
+  width: 60px; /* Match gate button size */
+  height: 60px; /* Match gate button size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-normal) var(--ease-apple);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .cell:hover {
-  @apply bg-blue-50 dark:bg-blue-900/20 transform scale-105;
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.05);
 }
 
 .cellEmpty {
-  @apply border-2 border-dashed border-gray-300 bg-white/60 dark:bg-gray-700/60;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .cellEmpty:hover {
-  @apply border-blue-400 bg-blue-50/50 dark:bg-blue-900/30 shadow-sm;
+  background: rgba(0, 122, 255, 0.1);
 }
 
 .gateElement {
-  @apply w-14 h-14 rounded-lg flex flex-col items-center justify-center;
-  @apply text-white font-bold text-sm shadow-md border-2 border-white/20;
-  @apply transition-all duration-200 cursor-pointer z-30;
+  width: 60px; /* Match gate button size */
+  height: 60px; /* Match gate button size */
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  box-shadow: var(--shadow-dark-sm);
+  transition: all var(--duration-normal) var(--ease-apple);
+  cursor: pointer;
+  position: relative;
 }
+
+/* Gate colors matching the gate selection area */
+.gateElement[data-gate="H"] { background: linear-gradient(135deg, #00f, #0056d6); }
+.gateElement[data-gate="X"] { background: linear-gradient(135deg, #ff0000, #cc0000); }
+.gateElement[data-gate="Y"] { background: linear-gradient(135deg, #32cd32, #228b22); }
+.gateElement[data-gate="Z"] { background: linear-gradient(135deg, #ff69b4, #c71585); }
+.gateElement[data-gate="S"] { background: linear-gradient(135deg, #00f, #0056d6); }
+.gateElement[data-gate="T"] { background: linear-gradient(135deg, #ff4500, #cc3700); }
+.gateElement[data-gate="CX"] { background: linear-gradient(135deg, #00f, #0056d6); }
+.gateElement[data-gate="CZ"] { background: linear-gradient(135deg, #800080, #4b0082); }
+.gateElement[data-gate="CNOT"] { background: linear-gradient(135deg, #00f, #0056d6); }
+.gateElement[data-gate="SW"] { background: linear-gradient(135deg, #ffa500, #cc8400); }
+.gateElement[data-gate="CP"] { background: linear-gradient(135deg, #32cd32, #228b22); }
+.gateElement[data-gate="PHASE"] { background: linear-gradient(135deg, #ff69b4, #c71585); }
 
 .gateElement:hover {
-  @apply transform -translate-y-0.5 scale-105 shadow-lg;
-}
-
-.gateElement:hover .removeBtn {
-  @apply opacity-100 transform scale-100 translate-x-1/2 -translate-y-1/2;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-dark-md);
 }
 
 .gateName {
-  @apply text-base font-bold;
-}
-
-.gateDescription {
-  @apply text-xs font-medium opacity-90;
+  font-size: var(--font-size-base);
+  color: white;
 }
 
 .removeBtn {
-  @apply absolute top-0 right-0 w-5 h-5 rounded-full bg-red-500 text-white;
-  @apply flex items-center justify-center text-xs font-bold;
-  @apply border-2 border-white opacity-0 transform scale-80 translate-x-1/2 -translate-y-1/2;
-  @apply transition-all duration-200 z-40;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-red);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  border: 1px solid white;
+  opacity: 0;
+  transform: translate(50%, -50%) scale(0.8);
+  transition: all var(--duration-normal) var(--ease-apple);
+  cursor: pointer;
 }
 
 .removeBtn:hover {
-  @apply bg-red-600 transform scale-100;
+  transform: translate(50%, -50%) scale(1.1);
 }
 
-.controlDot {
-  @apply w-4 h-4 rounded-full bg-gray-900 border-2 border-white;
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-sm;
-}
-
-.targetCircle {
-  @apply w-8 h-8 rounded-full border-3 border-gray-900 bg-white;
-  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-sm;
-}
-
-.targetCircle::after {
-  @apply content-[''] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
-  @apply w-2 h-2 bg-gray-900 rounded-full;
-}
-
-.gateElement[data-gate-id="h"] {
-  @apply bg-gradient-to-br from-blue-500 to-indigo-600;
-}
-
-.gateElement[data-gate-id="x"] {
-  @apply bg-gradient-to-br from-red-500 to-red-600;
-}
-
-.gateElement[data-gate-id="y"] {
-  @apply bg-gradient-to-br from-green-500 to-green-600;
-}
-
-.gateElement[data-gate-id="z"] {
-  @apply bg-gradient-to-br from-yellow-500 to-yellow-600;
-}
-
-.gateElement[data-gate-id="s"] {
-  @apply bg-gradient-to-br from-purple-500 to-purple-600;
-}
-
-.gateElement[data-gate-id="t"] {
-  @apply bg-gradient-to-br from-orange-500 to-orange-600;
-}
-
-.gateElement[data-gate-id="cx"],
-.gateElement[data-gate-id="cz"],
-.gateElement[data-gate-id="swap"],
-.gateElement[data-gate-id="cp"] {
-  @apply bg-gradient-to-br from-cyan-500 to-cyan-600;
-}
-
-.gateElement[data-gate-id="measure"] {
-  @apply bg-gradient-to-br from-gray-500 to-gray-600;
+.gateElement:hover .removeBtn {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
-  .qubitRow { @apply h-12; }
-  .qubitLabel { @apply w-12 h-12 text-xs; }
-  .cellContainer { @apply grid-cols-[repeat(auto-fill,48px)]; }
-  .cell { @apply w-12 h-12; }
-  .gateElement { @apply w-10 h-10; }
-  .gateName { @apply text-sm; }
-  .gateDescription { @apply text-[0.65rem]; }
+  .qubitRow { height: 60px; }
+  .qubitLabel { width: 60px; height: 60px; font-size: var(--font-size-sm); }
+  .cellContainer { grid-template-columns: repeat(auto-fill, 60px); }
+  .cell, .gateElement { width: 60px; height: 60px; }
+  .wireRow::after { height: 1.5px; }
+}
+
+@media (max-width: 480px) {
+  .circuitGrid { padding: var(--space-2); }
+  .qubitRow { height: 50px; }
+  .qubitLabel { width: 50px; height: 50px; }
+  .cellContainer { grid-template-columns: repeat(auto-fill, 50px); }
+  .cell, .gateElement { width: 50px; height: 50px; }
 }

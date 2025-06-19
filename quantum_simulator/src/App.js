@@ -26,10 +26,10 @@ import QiskitCode from './components/simulation/QiskitCode';
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Roboto', sans-serif;
+  width: 100%; /* Ensure full width */
 `;
 
 const Header = styled.header`
@@ -52,24 +52,36 @@ const Controls = styled.div`
 
 const MainContent = styled.div`
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-areas:
+    "gatePalette"
+    "circuit"
+    "visualization";
   gap: 20px;
-  margin-bottom: 20px;
+  width: 100%;
+`;
+
+const GatePaletteSection = styled.div`
+  grid-area: gatePalette;
+  width: 100vw; /* Full viewport width */
+  margin-left: calc(-50vw + 50%); /* Center relative to viewport */
+  padding: 20px; /* Match AppContainer padding */
 `;
 
 const CircuitSection = styled.div`
-  grid-column: 1 / 3;
+  grid-area: circuit;
   background: ${COLORS.BACKGROUND};
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  width: 100%; /* Ensure full width within grid */
 `;
 
 const VisualizationSection = styled.div`
+  grid-area: visualization;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  grid-column: 1 / 3;
+  width: 100%; /* Ensure full width */
 `;
 
 const Panel = styled.div`
@@ -101,37 +113,29 @@ function App() {
   // Handle simulation run
   const handleRunSimulation = async () => {
     if (qiskitIntegration.useQiskit) {
-      // Run with Qiskit
       const qiskitResults = await qiskitIntegration.runQiskitSimulation(
         circuitState.circuit,
         numQubits,
         circuitState.initialStates
       );
-      
-      // If Qiskit returns results, use them in local simulation
       if (qiskitResults?.statevector) {
         const steps = [{
           step: 0,
           state: qiskitResults.statevector,
           description: 'Qiskit simulation result'
         }];
-        // Note: We need to manually set these since useQuantumSimulation doesn't expose setters
-        // This is a limitation we'll address in the next iteration
         simulation.runSimulation(
           circuitState.circuit,
           numQubits,
           circuitState.initialStates,
           maxDepth
         ).then(() => {
-          // Override with Qiskit results if available
           if (qiskitResults.statevector) {
             // For now, we'll use the local simulation
-            // In a production app, we'd need better integration between hooks
           }
         });
       }
     } else {
-      // Run local simulation
       await simulation.runSimulation(
         circuitState.circuit,
         numQubits,
@@ -174,29 +178,25 @@ function App() {
         </Header>
         
         <MainContent>
-          <GatePalette 
-            onGateSelect={circuitState.setSelectedGate} 
-            selectedGate={circuitState.selectedGate} 
-          />
+          <GatePaletteSection>
+            <GatePalette 
+              onGateSelect={circuitState.setSelectedGate} 
+              selectedGate={circuitState.selectedGate} 
+            />
+          </GatePaletteSection>
           
           <CircuitSection>
             <h2>Quantum Circuit</h2>
-            
-            {/* Display errors */}
             {hasError && (
               <ErrorMessage>
                 {simulation.error || qiskitIntegration.error}
               </ErrorMessage>
             )}
-            
-            {/* Initial state controls */}
             <InitialStateControls 
               numQubits={numQubits}
               initialStates={circuitState.initialStates}
               onUpdateState={circuitState.updateInitialState}
             />
-            
-            {/* Qiskit integration controls */}
             <QiskitControls
               useQiskit={qiskitIntegration.useQiskit}
               setUseQiskit={qiskitIntegration.setUseQiskit}
@@ -211,16 +211,12 @@ function App() {
               isLoading={isLoading}
               error={qiskitIntegration.error}
             />
-            
-            {/* Circuit editor */}
             <CircuitEditor 
               circuit={circuitState.circuit}
               onCellClick={circuitState.handleCellClick}
               onRemoveGate={circuitState.removeGate}
               selectedGate={circuitState.selectedGate}
             />
-            
-            {/* Simulation controls */}
             <SimulationControls 
               onRun={handleRunSimulation}
               onClear={handleClearCircuit}
@@ -231,8 +227,6 @@ function App() {
               hasResults={simulation.hasResults}
               isLoading={isLoading}
             />
-            
-            {/* Display Qiskit code if available */}
             {qiskitIntegration.qiskitCode && (
               <QiskitCode code={qiskitIntegration.qiskitCode} />
             )}

@@ -1,116 +1,119 @@
-/* src/components/App/App.module.css */
 .container {
-  @apply min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800;
-  @apply flex flex-col max-w-[var(--container-max-width)] mx-auto p-6 gap-8;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: var(--space-6);
+  gap: var(--space-8);
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-primary); /* Ensure dark background */
 }
 
 .header {
-  @apply bg-white/10 dark:bg-gray-800/50 backdrop-blur-lg border border-white/20 rounded-2xl;
-  @apply p-6 flex justify-between items-center sticky top-6 z-50;
-  @apply shadow-lg transition-all duration-300;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: var(--space-4);
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-dark-md);
+  transition: all var(--duration-normal) var(--ease-apple);
+}
+
+.header:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-dark-lg);
 }
 
 .title {
-  @apply text-3xl font-bold text-gray-900 dark:text-white;
-  @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  font-family: var(--font-family-primary);
+  color: var(--color-text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .controls {
-  @apply flex items-center gap-4;
-}
-
-.qubitSelector {
-  @apply flex items-center gap-3 bg-white/10 dark:bg-gray-700/50;
-  @apply border border-white/20 rounded-lg p-3 backdrop-blur-sm;
-}
-
-.qubitSelector label {
-  @apply font-semibold text-sm text-gray-700 dark:text-gray-200 uppercase;
-}
-
-.qubitSelector select {
-  @apply bg-white/90 dark:bg-gray-700 border-none rounded-lg;
-  @apply px-4 py-2 font-semibold text-gray-800 dark:text-gray-100;
-  @apply transition-all duration-200;
-}
-
-.qubitSelector select:hover {
-  @apply bg-white dark:bg-gray-600 transform -translate-y-0.5 shadow-md;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .mainContent {
-  @apply grid grid-cols-[var(--sidebar-width)_1fr] gap-8 w-full;
+  display: grid;
+  grid-template-areas:
+    "gatePalette"
+    "circuit"
+    "visualization";
+  gap: var(--space-6);
+  width: 100%;
+  z-index: 1;
 }
 
 .gatePaletteSection {
-  @apply sticky top-32;
+  grid-area: gatePalette;
+  width: 100%; /* Ensure full width */
+  position: sticky;
+  top: var(--space-10);
+  height: fit-content;
 }
 
 .circuitSection {
-  @apply col-span-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg;
-  @apply border border-white/30 rounded-2xl p-8 shadow-xl;
-  @apply transition-all duration-300;
+  grid-area: circuit;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-dark-md);
+  transition: all var(--duration-normal) var(--ease-apple);
 }
 
-.circuitTitle {
-  @apply text-2xl font-bold text-gray-900 dark:text-white mb-6;
-  @apply flex items-center gap-3;
-}
-
-.circuitTitle::before {
-  @apply content-[''] w-1 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full;
+.circuitSection:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-dark-lg);
 }
 
 .visualizationSection {
-  @apply col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
-}
-
-.panel {
-  @apply bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border border-white/30;
-  @apply rounded-xl p-6 shadow-md transition-all duration-300;
-}
-
-.panel:hover {
-  @apply transform -translate-y-1 shadow-lg;
-}
-
-.panelTitle {
-  @apply text-xl font-semibold text-gray-900 dark:text-white mb-4;
-}
-
-.errorMessage {
-  @apply bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700;
-  @apply rounded-lg p-4 mb-6 text-red-600 dark:text-red-400 font-semibold;
-  @apply flex items-center gap-3;
-}
-
-.errorMessage::before {
-  @apply content-['⚠️'] text-lg;
+  grid-area: visualization;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-6);
 }
 
 @media (max-width: 1024px) {
   .mainContent {
-    @apply grid-cols-1 gap-6;
+    grid-template-areas:
+      "circuit"
+      "gatePalette"
+      "visualization";
+    gap: var(--space-4);
   }
-  .gatePaletteSection {
-    @apply static order-2;
-  }
-  .circuitSection {
-    @apply col-span-1 order-1;
-  }
-  .visualizationSection {
-    @apply order-3;
-  }
+  .gatePaletteSection { position: static; }
+  .circuitSection { grid-column: span 1; }
+  .visualizationSection { grid-column: span 1; }
 }
 
 @media (max-width: 768px) {
-  .container {
-    @apply p-4;
-  }
-  .header {
-    @apply flex-col gap-4;
-  }
-  .title {
-    @apply text-2xl;
-  }
+  .container { padding: var(--space-4); gap: var(--space-6); }
+  .header { flex-direction: column; gap: var(--space-3); top: var(--space-3); }
+  .title { font-size: var(--font-size-2xl); text-align: center; }
+  .controls { justify-content: center; }
+  .visualizationSection { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: var(--space-3); gap: var(--space-4); }
+  .title { font-size: var(--font-size-xl); }
 }

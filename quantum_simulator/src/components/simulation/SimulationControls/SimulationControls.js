@@ -12,17 +12,8 @@ const SimulationControls = ({
   hasResults,
   isLoading
 }) => {
-  const getStatusClass = () => {
-    if (isLoading) return styles.statusRunning;
-    if (hasResults) return styles.statusComplete;
-    return styles.statusReady;
-  };
+  
 
-  const getStatusText = () => {
-    if (isLoading) return 'Running';
-    if (hasResults) return 'Complete';
-    return 'Ready';
-  };
 
   return (
     <div className={styles.container}>
@@ -41,7 +32,7 @@ const SimulationControls = ({
             </>
           ) : (
             <>
-              ⚡ Run Simulation
+              Run Simulation
             </>
           )}
         </button>
@@ -52,14 +43,10 @@ const SimulationControls = ({
           disabled={isLoading}
           aria-label="Clear circuit"
         >
-          🗑️ Clear Circuit
+          Clear Circuit
         </button>
       </div>
       
-      {/* Status Indicator */}
-      <div className={`${styles.statusIndicator} ${getStatusClass()}`}>
-        {getStatusText()}
-      </div>
       
       {/* Step Controls */}
       {hasResults && (

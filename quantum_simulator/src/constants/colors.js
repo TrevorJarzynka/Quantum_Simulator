@@ -32,7 +32,7 @@ export const COLORS = {
     MEASURE: '#7f8c8d',
     
     // UI colors
-    BACKGROUND: '#ffffff',
+    BACKGROUND: '#0a0a0a',
     BACKGROUND_LIGHT: '#f8f9fa',
     BACKGROUND_DARK: '#f0f0f0',
     BORDER: '#ddd',
