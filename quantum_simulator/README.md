@@ -74,24 +74,6 @@ Copy or Download the generated code
 Run on IBM Quantum hardware or simulators
 Save your circuit as JSON for later use
 
-🏗️ Architecture
-quantum-simulator/
-├── src/
-│   ├── components/          # React UI components
-│   │   ├── circuit/        # Circuit building interface
-│   │   ├── simulation/     # Simulation controls
-│   │   └── visualization/  # State visualizers
-│   ├── hooks/              # Custom React hooks
-│   │   ├── useCircuitState.js
-│   │   ├── useQuantumSimulation.js
-│   │   └── useQiskitIntegration.js
-│   ├── services/           # Core simulation logic
-│   │   ├── quantumSimulation/
-│   │   └── qiskit/
-│   ├── utils/              # Mathematical utilities
-│   └── styles/             # Design system
-└── qiskit-backend/         # Optional Python backend
-
 🎨 Design System
 Modern Quantum-Inspired UI
 
@@ -108,40 +90,6 @@ Color Coding
 🔴 Errors: Clear red indicators
 ⚪ Probabilities: Gradient from white to blue
 
-🔧 API Integration
-Qiskit Backend Endpoints
-python# Get available quantum backends
-GET /api/qiskit/backends
-
-# Execute quantum circuit
-POST /api/qiskit
-{
-  "circuit": { "numQubits": 2, "gates": [...] },
-  "options": { "backend": "ibmq_qasm_simulator", "shots": 1024 }
-}
-
-# Generate Python code
-POST /api/qiskit/code
-{
-  "circuit": { "numQubits": 2, "gates": [...] }
-}
-Circuit Export Format
-json{
-  "numQubits": 3,
-  "maxDepth": 10,
-  "initialStates": [
-    { "value": "0", "phase": 0 },
-    { "value": "0", "phase": 0 },
-    { "value": "1", "phase": 0 }
-  ],
-  "circuit": [
-    [
-      { "gate": { "id": "h", "name": "H", "description": "Hadamard" } },
-      { "gate": null },
-      { "gate": { "id": "cx", "control": true } }
-    ]
-  ]
-}
 🧪 Advanced Features
 Quantum State Analysis
 
