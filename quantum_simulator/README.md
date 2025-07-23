@@ -1,70 +1,176 @@
-# Getting Started with Create React App
+A sophisticated quantum circuit simulator with real-time visualization, step-by-step execution, and professional Qiskit integration.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+✨ Features
+🎯 Interactive Circuit Building
 
-## Available Scripts
+Drag & Drop Interface: Intuitive gate placement with modern UI
+Comprehensive Gate Library: Single-qubit (H, X, Y, Z, S, T) and multi-qubit gates (CNOT, CZ, SWAP)
+Real-time Validation: Instant feedback on circuit structure and gate compatibility
 
-In the project directory, you can run:
+🔬 Advanced Quantum Simulation
 
-### `npm start`
+Step-by-Step Execution: Navigate through each gate operation
+State Vector Evolution: Watch quantum superposition and entanglement develop
+Mathematical Accuracy: Proper complex number arithmetic and unitary operations
+Multiple Visualization Modes: Probability bars, Bloch spheres, and density matrices
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+🌐 Professional Integration
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Qiskit Compatibility: Generate Python code for IBM Quantum hardware
+Multiple Export Formats: OpenQASM, Qiskit, and custom JSON formats
+Educational Tools: Built-in explanations and quantum mechanics principles
 
-### `npm test`
+🚀 Getting Started
+Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Node.js (v16.0 or higher)
+npm or yarn package manager
+Python 3.7+ (optional, for Qiskit backend)
 
-### `npm run build`
+Quick Start
+bash# Clone the repository
+git clone https://github.com/yourusername/quantum-circuit-simulator.git
+cd quantum-circuit-simulator
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Install dependencies
+npm install
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Start the development server
+npm start
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Open http://localhost:3000 in your browser
+Optional: Qiskit Backend Setup
+For real quantum hardware integration:
+bash# Navigate to backend directory
+cd src/qiskit-backend
 
-### `npm run eject`
+# Install Python dependencies
+pip install -r requirements.txt
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Set up IBM Quantum credentials (optional)
+echo "IBM_QUANTUM_TOKEN=your_token_here" > .env
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Start the backend server
+python app.py
+🎮 How to Use
+1. Build Your Circuit
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Select gates from the Gate Palette on the left
+Click on the Circuit Grid to place gates
+Use the Initial State Controls to set qubit starting states
+Remove gates by clicking the × button when hovering
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. Run Simulation
 
-## Learn More
+Click "Run Simulation" to execute your circuit
+Use Step Controls to navigate through the execution
+Watch the state evolution in real-time
+Analyze results in the Visualization Panels
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. Export and Share
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Enable Qiskit Integration for Python code generation
+Copy or Download the generated code
+Run on IBM Quantum hardware or simulators
+Save your circuit as JSON for later use
 
-### Code Splitting
+🏗️ Architecture
+quantum-simulator/
+├── src/
+│   ├── components/          # React UI components
+│   │   ├── circuit/        # Circuit building interface
+│   │   ├── simulation/     # Simulation controls
+│   │   └── visualization/  # State visualizers
+│   ├── hooks/              # Custom React hooks
+│   │   ├── useCircuitState.js
+│   │   ├── useQuantumSimulation.js
+│   │   └── useQiskitIntegration.js
+│   ├── services/           # Core simulation logic
+│   │   ├── quantumSimulation/
+│   │   └── qiskit/
+│   ├── utils/              # Mathematical utilities
+│   └── styles/             # Design system
+└── qiskit-backend/         # Optional Python backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+🎨 Design System
+Modern Quantum-Inspired UI
 
-### Analyzing the Bundle Size
+Dark Theme: Optimized for extended coding sessions
+Glassmorphism: Translucent panels with backdrop blur
+Smooth Animations: Apple-style easing and micro-interactions
+Accessible: WCAG 2.1 compliant with keyboard navigation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Color Coding
 
-### Making a Progressive Web App
+🔵 Single-Qubit Gates: Blue gradient family
+🟢 Multi-Qubit Gates: Green and teal variants
+🟡 Measurement: Gold and amber tones
+🔴 Errors: Clear red indicators
+⚪ Probabilities: Gradient from white to blue
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+🔧 API Integration
+Qiskit Backend Endpoints
+python# Get available quantum backends
+GET /api/qiskit/backends
 
-### Advanced Configuration
+# Execute quantum circuit
+POST /api/qiskit
+{
+  "circuit": { "numQubits": 2, "gates": [...] },
+  "options": { "backend": "ibmq_qasm_simulator", "shots": 1024 }
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# Generate Python code
+POST /api/qiskit/code
+{
+  "circuit": { "numQubits": 2, "gates": [...] }
+}
+Circuit Export Format
+json{
+  "numQubits": 3,
+  "maxDepth": 10,
+  "initialStates": [
+    { "value": "0", "phase": 0 },
+    { "value": "0", "phase": 0 },
+    { "value": "1", "phase": 0 }
+  ],
+  "circuit": [
+    [
+      { "gate": { "id": "h", "name": "H", "description": "Hadamard" } },
+      { "gate": null },
+      { "gate": { "id": "cx", "control": true } }
+    ]
+  ]
+}
+🧪 Advanced Features
+Quantum State Analysis
 
-### Deployment
+Density Matrix Visualization: Full quantum state characterization
+Entanglement Entropy: Measure quantum correlations
+Partial Traces: Reduced density matrices for subsystems
+Observable Expectations: Pauli operators and custom measurements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Educational Tools
 
-### `npm run build` fails to minify
+Step-by-Step Explanations: What each gate does mathematically
+Gate Matrix Display: Show underlying unitary operations
+Quantum Mechanics Principles: Built-in educational content
+Interactive Tutorials: Guided quantum algorithm implementations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+🐛 Known Issues & Roadmap
+Current Limitations
+
+Multi-qubit gate placement: UI could be more intuitive
+Circuit depth: Performance degrades with very deep circuits
+Custom gates: Limited support for user-defined operations
+
+Upcoming Features
+
+ Visual Circuit Editor: Drag-and-drop multi-qubit gate placement
+ Noise Simulation: Realistic quantum hardware modeling
+ Circuit Optimization: Automatic gate sequence optimization
+ Collaborative Editing: Real-time collaboration features
+ Mobile App: Native iOS and Android applications
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
