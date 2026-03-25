@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Analytics } from "@vercel/analytics/react";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -92,6 +93,8 @@ function App() {
   }, [circuitState.circuit, numQubits, maxDepth]);
 
   return (
+    <>
+    <Analytics />
     <DndProvider backend={HTML5Backend}>
       <div className={styles.app}>
 
@@ -256,6 +259,7 @@ function App() {
 
       </div>
     </DndProvider>
+    </>
   );
 }
 
