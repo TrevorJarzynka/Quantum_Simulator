@@ -1,111 +1,55 @@
 // src/services/quantumSimulation/QuantumSimulator.js
-import { GATE_MATRICES } from '../../constants/gates';
+import { GATE_MATRICES, getRotationMatrix } from '../../constants/gates';
 import { ComplexMath } from '../../utils/math/ComplexNumbers';
 
-/**
- * Quantum Circuit Simulator Service
- * Handles quantum state evolution and gate operations
- */
 export class QuantumSimulator {
   constructor() {
     this.debugMode = process.env.NODE_ENV === 'development';
   }
 
-  /**
-   * Create initial quantum state based on qubit initial values
-   * @param {number} numQubits - Number of qubits
-   * @param {Array} initialStates - Array of initial states for each qubit
-   * @returns {Array} Initial state vector
-   */
   createInitialState(numQubits, initialStates) {
     const size = Math.pow(2, numQubits);
-    const state = Array(size).fill().map(() => ({ re: 0, im: 0 }));
-    
-    // Calculate the integer value of the basis state from qubit values
+    const state = Array(size).fill(null).map(() => ({ re: 0, im: 0 }));
     let basisStateIndex = 0;
     for (let i = 0; i < numQubits; i++) {
-      if (initialStates[i]?.value === '1') {
-        basisStateIndex |= (1 << i);
-      }
+      if (initialStates[i]?.value === '1') basisStateIndex |= (1 << i);
     }
-    
-    // Set the amplitude of the basis state
     state[basisStateIndex] = { re: 1, im: 0 };
-    
     return state;
   }
 
-  /**
-   * Apply a single-qubit gate using matrix multiplication
-   * @param {Array} state - Current quantum state
-   * @param {Array} gateMatrix - 2x2 gate matrix
-   * @param {number} qubit - Target qubit index
-   * @param {number} numQubits - Total number of qubits
-   */
-  applySingleQubitGate(state, gateMatrix, qubit, numQubits) {
-    const size = Math.pow(2, numQubits);
-    const newState = Array(size).fill().map(() => ({ re: 0, im: 0 }));
-    
-    // For each basis state in the state vector
-    for (let i = 0; i < size; i++) {
-      // Determine if the qubit is 0 or 1 in this basis state
-      const qubitValue = (i >> qubit) & 1;
-      
-      // Calculate the index with the qubit flipped
-      const flippedIndex = i ^ (1 << qubit);
-      
-      // Calculate the contributions to the new amplitudes
-      if (qubitValue === 0) {
-        // |...0...⟩ maps to gateMatrix[0][0]|...0...⟩ + gateMatrix[0][1]|...1...⟩
-        newState[i] = ComplexMath.add(
-          newState[i], 
-          ComplexMath.multiply(gateMatrix[0][0], state[i])
-        );
-        newState[flippedIndex] = ComplexMath.add(
-          newState[flippedIndex], 
-          ComplexMath.multiply(gateMatrix[0][1], state[i])
-        );
-      } else {
-        // |...1...⟩ maps to gateMatrix[1][0]|...0...⟩ + gateMatrix[1][1]|...1...⟩
-        newState[flippedIndex] = ComplexMath.add(
-          newState[flippedIndex], 
-          ComplexMath.multiply(gateMatrix[1][0], state[i])
-        );
-        newState[i] = ComplexMath.add(
-          newState[i], 
-          ComplexMath.multiply(gateMatrix[1][1], state[i])
-        );
-      }
+  /** Get the 2×2 matrix for a gate, handling parametric rotation gates. */
+  getGateMatrix(gate) {
+    if (gate.id === 'rx' || gate.id === 'ry' || gate.id === 'rz') {
+      return getRotationMatrix(gate.id, gate.angle ?? Math.PI / 2);
     }
-    
-    // Copy the new state back to the original state array
-    for (let i = 0; i < size; i++) {
-      state[i] = newState[i];
-    }
+    return GATE_MATRICES[gate.id];
   }
 
-  /**
-   * Apply a controlled gate operation
-   * @param {Array} state - Current quantum state
-   * @param {Array} gateMatrix - 2x2 gate matrix for target qubit
-   * @param {number} controlQubit - Control qubit index
-   * @param {number} targetQubit - Target qubit index
-   * @param {number} numQubits - Total number of qubits
-   */
+  applySingleQubitGate(state, gateMatrix, qubit, numQubits) {
+    const size = Math.pow(2, numQubits);
+    const newState = Array(size).fill(null).map(() => ({ re: 0, im: 0 }));
+    for (let i = 0; i < size; i++) {
+      const qubitValue = (i >> qubit) & 1;
+      const flippedIndex = i ^ (1 << qubit);
+      if (qubitValue === 0) {
+        newState[i] = ComplexMath.add(newState[i], ComplexMath.multiply(gateMatrix[0][0], state[i]));
+        newState[flippedIndex] = ComplexMath.add(newState[flippedIndex], ComplexMath.multiply(gateMatrix[0][1], state[i]));
+      } else {
+        newState[flippedIndex] = ComplexMath.add(newState[flippedIndex], ComplexMath.multiply(gateMatrix[1][0], state[i]));
+        newState[i] = ComplexMath.add(newState[i], ComplexMath.multiply(gateMatrix[1][1], state[i]));
+      }
+    }
+    for (let i = 0; i < size; i++) state[i] = newState[i];
+  }
+
   applyControlledGate(state, gateMatrix, controlQubit, targetQubit, numQubits) {
     const size = Math.pow(2, numQubits);
-    // Deep copy so reads of state[flippedIndex] always use original amplitudes
     const orig = state.map(c => ({ re: c.re, im: c.im }));
     const newState = state.map(c => ({ re: c.re, im: c.im }));
-
     for (let i = 0; i < size; i++) {
-      const controlValue = (i >> controlQubit) & 1;
-      if (controlValue !== 1) continue;
-
-      const targetValue = (i >> targetQubit) & 1;
-      // Only process when target bit is 0 so each pair (i, flippedIndex) is handled once
-      if (targetValue !== 0) continue;
-
+      if (((i >> controlQubit) & 1) !== 1) continue;
+      if (((i >> targetQubit) & 1) !== 0) continue;
       const flippedIndex = i ^ (1 << targetQubit);
       newState[i] = ComplexMath.add(
         ComplexMath.multiply(gateMatrix[0][0], orig[i]),
@@ -116,24 +60,13 @@ export class QuantumSimulator {
         ComplexMath.multiply(gateMatrix[1][1], orig[flippedIndex])
       );
     }
-
-    for (let i = 0; i < size; i++) {
-      state[i] = newState[i];
-    }
+    for (let i = 0; i < size; i++) state[i] = newState[i];
   }
 
-  /**
-   * Apply a SWAP gate between two qubits
-   * @param {Array} state - Current quantum state
-   * @param {number} qubit1 - First qubit
-   * @param {number} qubit2 - Second qubit
-   * @param {number} numQubits - Total number of qubits
-   */
   applySwapGate(state, qubit1, qubit2, numQubits) {
     const size = Math.pow(2, numQubits);
     const orig = state.map(c => ({ re: c.re, im: c.im }));
     const newState = state.map(c => ({ re: c.re, im: c.im }));
-
     for (let i = 0; i < size; i++) {
       const bit1 = (i >> qubit1) & 1;
       const bit2 = (i >> qubit2) & 1;
@@ -142,180 +75,119 @@ export class QuantumSimulator {
         newState[swappedIndex] = { re: orig[i].re, im: orig[i].im };
       }
     }
-
-    for (let i = 0; i < size; i++) {
-      state[i] = newState[i];
-    }
+    for (let i = 0; i < size; i++) state[i] = newState[i];
   }
 
-  /**
-   * Process gates in a column and apply them to the state
-   * @param {Array} state - Current quantum state
-   * @param {Array} gates - Gates to apply in this step
-   * @param {number} numQubits - Total number of qubits
-   * @returns {Array} Descriptions of applied gates
-   */
   applyGatesInColumn(state, gates, numQubits) {
-    const gateDescriptions = [];
-    
-    // First apply single-qubit gates
-    const singleQubitGates = gates.filter(g => !g.gate.control && !g.gate.target);
-    for (const { qubit, gate } of singleQubitGates) {
-      if (GATE_MATRICES[gate.id]) {
-        this.applySingleQubitGate(state, GATE_MATRICES[gate.id], qubit, numQubits);
-        gateDescriptions.push(`${gate.name} gate to qubit ${qubit}`);
-        
-        if (this.debugMode) {
-          console.log(`Applied ${gate.id} to qubit ${qubit}`);
-        }
+    const descriptions = [];
+
+    // Single-qubit gates first
+    const single = gates.filter(g => !g.gate.control && !g.gate.target && g.gate.id !== 'measure');
+    for (const { qubit, gate } of single) {
+      const mat = this.getGateMatrix(gate);
+      if (mat) {
+        this.applySingleQubitGate(state, mat, qubit, numQubits);
+        const label = gate.parametric && gate.angle != null
+          ? `${gate.name}(${(gate.angle * 180 / Math.PI).toFixed(0)}°)`
+          : gate.name;
+        descriptions.push(`${label} on Q${qubit}`);
       }
     }
-    
-    // Then apply multi-qubit gates
-    const multiQubitGates = gates.filter(g => g.gate.control || g.gate.target);
-    const processedPairs = new Set();
-    
-    for (const { qubit, gate } of multiQubitGates) {
-      if (gate.control) {
-        // Find corresponding target
-        const targetGate = multiQubitGates.find(g => 
-          g.gate.target && g.gate.id === gate.id && g.qubit !== qubit
-        );
-        
-        if (targetGate && !processedPairs.has(`${qubit}-${targetGate.qubit}`)) {
-          processedPairs.add(`${qubit}-${targetGate.qubit}`);
-          processedPairs.add(`${targetGate.qubit}-${qubit}`);
-          
-          if (gate.id === 'swap') {
-            this.applySwapGate(state, qubit, targetGate.qubit, numQubits);
-            gateDescriptions.push(`SWAP between qubits ${qubit} and ${targetGate.qubit}`);
-          } else if (gate.id === 'cx') {
-            this.applyControlledGate(state, GATE_MATRICES.x, qubit, targetGate.qubit, numQubits);
-            gateDescriptions.push(`CNOT with control=${qubit}, target=${targetGate.qubit}`);
-          } else if (gate.id === 'cz') {
-            this.applyControlledGate(state, GATE_MATRICES.z, qubit, targetGate.qubit, numQubits);
-            gateDescriptions.push(`CZ with control=${qubit}, target=${targetGate.qubit}`);
-          } else if (gate.id === 'cp') {
-            // Controlled-Phase (π/2 by default)
-            this.applyControlledGate(state, GATE_MATRICES.s, qubit, targetGate.qubit, numQubits);
-            gateDescriptions.push(`CP with control=${qubit}, target=${targetGate.qubit}`);
-          }
-          
-          if (this.debugMode) {
-            console.log(`Applied ${gate.id} from qubit ${qubit} to ${targetGate.qubit}`);
-          }
-        }
+
+    // Multi-qubit gates
+    const multi = gates.filter(g => g.gate.control || g.gate.target);
+    const processed = new Set();
+    for (const { qubit, gate } of multi) {
+      if (!gate.control) continue;
+      const target = multi.find(g => g.gate.target && g.gate.id === gate.id && g.qubit !== qubit);
+      if (!target) continue;
+      const key = `${qubit}-${target.qubit}`;
+      if (processed.has(key)) continue;
+      processed.add(key);
+      processed.add(`${target.qubit}-${qubit}`);
+
+      switch (gate.id) {
+        case 'cx':
+          this.applyControlledGate(state, GATE_MATRICES.x, qubit, target.qubit, numQubits);
+          descriptions.push(`CNOT ctrl=Q${qubit} tgt=Q${target.qubit}`);
+          break;
+        case 'cy':
+          this.applyControlledGate(state, GATE_MATRICES.y, qubit, target.qubit, numQubits);
+          descriptions.push(`CY ctrl=Q${qubit} tgt=Q${target.qubit}`);
+          break;
+        case 'cz':
+          this.applyControlledGate(state, GATE_MATRICES.z, qubit, target.qubit, numQubits);
+          descriptions.push(`CZ ctrl=Q${qubit} tgt=Q${target.qubit}`);
+          break;
+        case 'ch':
+          this.applyControlledGate(state, GATE_MATRICES.h, qubit, target.qubit, numQubits);
+          descriptions.push(`CH ctrl=Q${qubit} tgt=Q${target.qubit}`);
+          break;
+        case 'cp':
+          this.applyControlledGate(state, GATE_MATRICES.s, qubit, target.qubit, numQubits);
+          descriptions.push(`CP ctrl=Q${qubit} tgt=Q${target.qubit}`);
+          break;
+        case 'swap':
+          this.applySwapGate(state, qubit, target.qubit, numQubits);
+          descriptions.push(`SWAP Q${qubit}↔Q${target.qubit}`);
+          break;
+        default:
+          break;
       }
     }
-    
-    return gateDescriptions;
+
+    return descriptions;
   }
 
-  /**
-   * Simulate the entire quantum circuit
-   * @param {Array} circuit - Circuit representation
-   * @param {number} numQubits - Number of qubits
-   * @param {Array} initialStates - Initial states of qubits
-   * @param {number} maxDepth - Maximum circuit depth
-   * @returns {Array} Array of simulation steps
-   */
   simulate(circuit, numQubits, initialStates, maxDepth) {
     const initialState = this.createInitialState(numQubits, initialStates);
-    const steps = [{ 
-      step: 0, 
-      state: initialState, 
-      description: 'Initial state' 
+    const steps = [{
+      step: 0,
+      column: null,
+      state: initialState,
+      description: 'Initial state'
     }];
-    
-    // Check if the circuit has any gates
-    const hasAnyGates = circuit.some(row => 
-      row.some(cell => cell.gate !== null)
-    );
-    
-    if (!hasAnyGates) {
-      return steps;
-    }
-    
-    // Process each column (time step) of the circuit
+
+    const hasAnyGates = circuit.some(row => row.some(cell => cell.gate !== null));
+    if (!hasAnyGates) return steps;
+
     for (let col = 0; col < maxDepth; col++) {
       const gatesInColumn = [];
-      
-      // Collect all gates in this column
       for (let row = 0; row < numQubits; row++) {
-        if (circuit[row][col].gate !== null) {
-          gatesInColumn.push({
-            qubit: row,
-            gate: circuit[row][col].gate
-          });
+        if (circuit[row][col]?.gate !== null && circuit[row][col]?.gate !== undefined) {
+          gatesInColumn.push({ qubit: row, gate: circuit[row][col].gate });
         }
       }
-      
       if (gatesInColumn.length > 0) {
-        // Create a copy of the previous state
         const currentState = JSON.parse(JSON.stringify(steps[steps.length - 1].state));
-        
-        // Apply all gates in this column
-        const gateDescriptions = this.applyGatesInColumn(currentState, gatesInColumn, numQubits);
-        
-        // Create description
-        const description = gateDescriptions.length > 0 
-          ? `Applied ${gateDescriptions.join(', ')}`
-          : 'No gates applied';
-        
-        // Add the new state to steps
+        const descriptions = this.applyGatesInColumn(currentState, gatesInColumn, numQubits);
         steps.push({
           step: steps.length,
+          column: col,   // which circuit column this step corresponds to
           state: currentState,
-          description
+          description: descriptions.length > 0 ? `Applied: ${descriptions.join(', ')}` : 'No gates'
         });
       }
     }
-    
+
     return steps;
   }
 
-  /**
-   * Calculate measurement probabilities for the current state
-   * @param {Array} state - Current quantum state
-   * @returns {Array} Probabilities for each basis state
-   */
   calculateProbabilities(state) {
-    return state.map(amplitude => 
-      ComplexMath.magnitude(amplitude) ** 2
-    );
+    return state.map(amp => ComplexMath.magnitude(amp) ** 2);
   }
 
-  /**
-   * Perform a measurement on a specific qubit
-   * @param {Array} state - Current quantum state
-   * @param {number} qubit - Qubit to measure
-   * @param {number} numQubits - Total number of qubits
-   * @returns {Object} Measurement result and collapsed state
-   */
   measureQubit(state, qubit, numQubits) {
-    const prob0 = state.reduce((sum, amplitude, idx) => {
-      if ((idx & (1 << qubit)) === 0) {
-        return sum + ComplexMath.magnitude(amplitude) ** 2;
-      }
+    const prob0 = state.reduce((sum, amp, idx) => {
+      if ((idx & (1 << qubit)) === 0) return sum + ComplexMath.magnitude(amp) ** 2;
       return sum;
     }, 0);
-    
-    const measurementResult = Math.random() < prob0 ? 0 : 1;
-    
-    // Collapse the state
-    const collapsedState = state.map((amplitude, idx) => {
-      const qubitValue = (idx >> qubit) & 1;
-      if (qubitValue === measurementResult) {
-        const norm = measurementResult === 0 ? Math.sqrt(prob0) : Math.sqrt(1 - prob0);
-        return ComplexMath.scale(amplitude, 1 / norm);
-      }
+    const result = Math.random() < prob0 ? 0 : 1;
+    const norm = result === 0 ? Math.sqrt(prob0) : Math.sqrt(1 - prob0);
+    const collapsed = state.map((amp, idx) => {
+      if (((idx >> qubit) & 1) === result) return ComplexMath.scale(amp, 1 / norm);
       return { re: 0, im: 0 };
     });
-    
-    return {
-      result: measurementResult,
-      state: collapsedState,
-      probability: measurementResult === 0 ? prob0 : 1 - prob0
-    };
+    return { result, state: collapsed, probability: result === 0 ? prob0 : 1 - prob0 };
   }
 }

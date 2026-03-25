@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import StateVisualizer from '../StateVisualizer';
 import MathVisualizer from '../MathVisualizer';
 import DensityMatrixVisualizer from '../DensityMatrixVisualizer';
+import BlochSphere from '../BlochSphere';
 import styles from './VisualizationPanel.module.css';
 
 const TABS = [
   { id: 'state',   label: 'State Vector' },
+  { id: 'bloch',   label: 'Bloch Sphere' },
   { id: 'math',    label: 'Math' },
   { id: 'density', label: 'Analysis' },
 ];
@@ -34,7 +36,7 @@ const VisualizationPanel = ({ currentState, numQubits, currentStep }) => {
         <div className={styles.empty}>
           <span className={styles.emptyIcon}>⚛</span>
           <span className={styles.emptyText}>
-            Build a circuit and click Run to see the quantum state visualized here.
+            Build a circuit and click Run to visualize the quantum state.
           </span>
         </div>
       </div>
@@ -56,6 +58,12 @@ const VisualizationPanel = ({ currentState, numQubits, currentStep }) => {
             numQubits={numQubits}
             step={currentStep}
             description={currentState.description}
+          />
+        )}
+        {activeTab === 'bloch' && (
+          <BlochSphere
+            stateData={currentState.state}
+            numQubits={numQubits}
           />
         )}
         {activeTab === 'math' && (

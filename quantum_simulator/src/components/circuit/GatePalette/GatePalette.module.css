@@ -113,3 +113,134 @@
   letter-spacing: 0.06em;
   z-index: 1;
 }
+
+/* Parametric angle input */
+.angleBox {
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.angleLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(56, 189, 248, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.angleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.angleSlider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(56, 189, 248, 0.2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.angleSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #38BDF8;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+}
+
+.angleValue {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-family-mono, monospace);
+  color: #38BDF8;
+  min-width: 42px;
+  text-align: right;
+}
+
+.anglePresets {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.anglePreset {
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: transparent;
+  color: rgba(56, 189, 248, 0.7);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.anglePreset:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38BDF8;
+}
+
+/* Preset circuits section */
+.presetSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.presetSelect {
+  width: 100%;
+  padding: 7px 10px;
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 8px;
+  color: rgba(240, 249, 255, 0.85);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+.presetSelect:focus {
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.presetInfo {
+  font-size: 10px;
+  color: rgba(56, 189, 248, 0.5);
+  line-height: 1.4;
+  padding: 0 2px;
+  min-height: 28px;
+}
+
+.presetLoad {
+  width: 100%;
+  padding: 8px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  color: #38BDF8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.04em;
+}
+
+.presetLoad:hover {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(129, 140, 248, 0.3));
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: translateY(-1px);
+}

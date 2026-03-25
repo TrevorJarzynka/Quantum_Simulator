@@ -22,29 +22,62 @@ const calcDensity = (sv) => {
   );
 };
 
+// Reduced density matrix for qubit q → compute Von Neumann entropy S = -Tr(ρ log ρ)
+const qubitEntropy = (sv, q) => {
+  let rho00 = 0, rho11 = 0, rho01re = 0, rho01im = 0;
+  for (let m = 0; m < sv.length; m++) {
+    if ((m >> q) & 1) continue;
+    const m1 = m | (1 << q);
+    const am = sv[m], am1 = sv[m1];
+    rho00  += am.re * am.re + am.im * am.im;
+    rho11  += am1.re * am1.re + am1.im * am1.im;
+    rho01re += am.re * am1.re + am.im * am1.im;
+    rho01im += am.im * am1.re - am.re * am1.im;
+  }
+  // Eigenvalues of 2×2 Hermitian matrix [[ρ00, ρ01],[ρ01*, ρ11]]
+  const bMag = Math.sqrt(rho01re ** 2 + rho01im ** 2);
+  const mu = Math.sqrt(((rho00 - rho11) / 2) ** 2 + bMag ** 2);
+  const l1 = 0.5 + mu;
+  const l2 = 0.5 - mu;
+  const h = p => (p < 1e-10 ? 0 : -p * Math.log2(p));
+  return { entropy: h(l1) + h(l2), purity: l1 ** 2 + l2 ** 2 };
+};
+
 const DensityMatrixVisualizer = ({ stateData, numQubits }) => {
   const dm = calcDensity(stateData);
 
-  // Purity = Tr(ρ²)
+  // Global purity = Tr(ρ²)
   const purity = dm.reduce((s, row, i) => {
-    const rho2ii = dm[i].reduce((s2, _, k) => {
-      return s2 + (dm[i][k].re * dm[k][i].re - dm[i][k].im * dm[k][i].im);
-    }, 0);
-    return s + rho2ii;
+    return s + dm[i].reduce((s2, _, k) => s2 + dm[i][k].re * dm[k][i].re - dm[i][k].im * dm[k][i].im, 0);
   }, 0);
 
-  // ⟨Z⟩ per qubit
+  // Per-qubit Pauli-Z expectation
   const zExpect = Array(numQubits).fill(0).map((_, q) =>
-    stateData.reduce((s, amp, idx) => {
-      const bit = (idx >> q) & 1;
-      return s + prob(amp) * (bit === 0 ? 1 : -1);
-    }, 0)
+    stateData.reduce((s, amp, idx) => s + prob(amp) * (((idx >> q) & 1) === 0 ? 1 : -1), 0)
   );
+
+  // Per-qubit Pauli-X and Pauli-Y expectations from reduced DM
+  const xyExpect = Array(numQubits).fill(null).map((_, q) => {
+    let rho01re = 0, rho01im = 0;
+    for (let m = 0; m < stateData.length; m++) {
+      if ((m >> q) & 1) continue;
+      const m1 = m | (1 << q);
+      const am = stateData[m], am1 = stateData[m1];
+      rho01re += am.re * am1.re + am.im * am1.im;
+      rho01im += am.im * am1.re - am.re * am1.im;
+    }
+    return { x: 2 * rho01re, y: -2 * rho01im };
+  });
+
+  // Per-qubit entropy
+  const qubitStats = Array(numQubits).fill(null).map((_, q) => qubitEntropy(stateData, q));
 
   const maxDim = Math.min(dm.length, 8);
 
   return (
     <div className={styles.container}>
+
+      {/* Density matrix heatmap */}
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Density Matrix ρ = |ψ⟩⟨ψ|</div>
         <div className={styles.matrixScroll}>
@@ -75,42 +108,83 @@ const DensityMatrixVisualizer = ({ stateData, numQubits }) => {
 
       <div className={styles.divider} />
 
+      {/* Global purity */}
       <div className={styles.section}>
         <div className={styles.sectionTitle}>State Properties</div>
         <div className={styles.infoCard}>
-          <div className={styles.infoLabel}>Purity  Tr(ρ²)</div>
+          <div className={styles.infoLabel}>Global Purity  Tr(ρ²)</div>
           <div className={styles.infoValue}>{purity.toFixed(4)}</div>
           <div className={styles.infoNote}>
-            {purity > 0.99
-              ? 'Pure state — no decoherence'
-              : purity > 0.5
-              ? 'Partially mixed state'
-              : 'Highly mixed state'}
+            {purity > 0.99 ? 'Pure state — maximum coherence' :
+             purity > 0.7  ? 'Partially mixed — entanglement present' :
+                             'Highly mixed state'}
           </div>
         </div>
       </div>
 
       <div className={styles.divider} />
 
+      {/* Per-qubit entanglement entropy */}
       <div className={styles.section}>
-        <div className={styles.sectionTitle}>Pauli-Z Expectation Values</div>
-        {zExpect.map((z, q) => {
-          const fillLeft = z >= 0 ? '50%' : `${((z + 1) / 2) * 100}%`;
-          const fillWidth = `${Math.abs(z) * 50}%`;
-          const fillColor = z >= 0
-            ? 'linear-gradient(90deg, #38BDF8, #818CF8)'
-            : 'linear-gradient(90deg, #F87171, #F472B6)';
-          return (
-            <div key={q} className={styles.obsRow}>
-              <span className={styles.obsLabel}>⟨Z{q}⟩</span>
-              <div className={styles.obsBar}>
-                <div
-                  className={styles.obsBarFill}
-                  style={{ left: fillLeft, width: fillWidth, background: fillColor }}
-                />
+        <div className={styles.sectionTitle}>Entanglement Entropy (Von Neumann)</div>
+        <div className={styles.entropyGrid}>
+          {qubitStats.map(({ entropy: s }, q) => {
+            const isEntangled = s > 0.01;
+            const color = s < 0.05 ? '#22c55e' : s < 0.5 ? '#818CF8' : '#F472B6';
+            return (
+              <div key={q} className={styles.entropyCard}>
+                <div className={styles.entropyCardLabel}>Q{q}</div>
+                <div className={styles.entropyCardValue} style={{ color }}>
+                  {s.toFixed(3)}
+                </div>
+                <div className={styles.entropyBar}>
+                  <div
+                    className={styles.entropyBarFill}
+                    style={{ width: `${s * 100}%`, background: color }}
+                  />
+                </div>
+                <div className={styles.entropyCardNote}>
+                  {isEntangled ? 'Entangled' : 'Separable'}
+                </div>
               </div>
-              <span className={styles.obsValue}>{z.toFixed(3)}</span>
-            </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className={styles.divider} />
+
+      {/* Pauli expectation values */}
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Pauli Expectations ⟨σ⟩</div>
+        {zExpect.map((z, q) => {
+          const x = xyExpect[q].x;
+          const y = xyExpect[q].y;
+
+          const makeBar = (val, labelX, labelY) => {
+            const fillLeft = val >= 0 ? '50%' : `${((val + 1) / 2) * 100}%`;
+            const fillWidth = `${Math.abs(val) * 50}%`;
+            const fillColor = val >= 0
+              ? 'linear-gradient(90deg, #38BDF8, #818CF8)'
+              : 'linear-gradient(90deg, #F87171, #F472B6)';
+            return (
+              <div key={`${labelX}${q}`} className={styles.obsRow}>
+                <span className={styles.obsLabel}>⟨{labelX}{q}⟩</span>
+                <div className={styles.obsBar}>
+                  <div className={styles.obsBarFill}
+                    style={{ left: fillLeft, width: fillWidth, background: fillColor }} />
+                </div>
+                <span className={styles.obsValue}>{val.toFixed(3)}</span>
+              </div>
+            );
+          };
+
+          return (
+            <React.Fragment key={q}>
+              {makeBar(x, 'X', q)}
+              {makeBar(y, 'Y', q)}
+              {makeBar(z, 'Z', q)}
+            </React.Fragment>
           );
         })}
       </div>

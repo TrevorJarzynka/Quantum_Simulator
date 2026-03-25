@@ -293,6 +293,38 @@
   font-size: 13px;
 }
 
+/* ── CIRCUIT STATS BAR ───────────────────────────────── */
+.statsBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.statChip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.statLabel {
+  color: rgba(56, 189, 248, 0.5);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.statValue {
+  color: rgba(240, 249, 255, 0.85);
+  font-family: var(--font-family-mono);
+}
+
 /* ── RIGHT PANEL ─────────────────────────────────────── */
 .panel {
   overflow: hidden;

@@ -122,3 +122,55 @@
   text-align: right;
   flex-shrink: 0;
 }
+
+/* Entanglement section */
+.entropyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.entropyCard {
+  background: rgba(56, 189, 248, 0.04);
+  border: 1px solid rgba(56, 189, 248, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entropyCardLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(56, 189, 248, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.entropyCardValue {
+  font-family: var(--font-family-mono);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.entropyCardNote {
+  font-size: 9px;
+  color: rgba(147, 210, 240, 0.45);
+  line-height: 1.4;
+}
+
+.entropyBar {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.entropyBarFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
