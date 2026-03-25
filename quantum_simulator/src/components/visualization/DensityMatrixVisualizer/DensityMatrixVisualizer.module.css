@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(56, 189, 248, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.matrixScroll {
+  overflow-x: auto;
+  border-radius: 10px;
+}
+
+.matrixGrid {
+  display: inline-grid;
+  gap: 2px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.matrixCell {
+  width: 62px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.infoCard {
+  background: rgba(56, 189, 248, 0.04);
+  border: 1px solid rgba(56, 189, 248, 0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.infoLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(56, 189, 248, 0.6);
+  margin-bottom: 4px;
+}
+
+.infoValue {
+  font-family: var(--font-family-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(240, 249, 255, 0.85);
+}
+
+.infoNote {
+  font-size: 11px;
+  color: rgba(147, 210, 240, 0.5);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(56,189,248,0.08);
+}
+
+.obsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(56,189,248,0.06);
+}
+
+.obsRow:last-child {
+  border-bottom: none;
+}
+
+.obsLabel {
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  color: rgba(147, 210, 240, 0.6);
+  width: 64px;
+  flex-shrink: 0;
+}
+
+.obsBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.obsBarFill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38BDF8, #818CF8);
+}
+
+.obsValue {
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(240, 249, 255, 0.7);
+  width: 52px;
+  text-align: right;
+  flex-shrink: 0;
+}

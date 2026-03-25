@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(56, 189, 248, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* State vector rows */
+.stateRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.basis {
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(240, 249, 255, 0.8);
+  width: 52px;
+  flex-shrink: 0;
+}
+
+.amplitude {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  color: rgba(147, 210, 240, 0.6);
+  width: 72px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.barTrack {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(90deg, #38BDF8, #818CF8);
+}
+
+.barFillLow {
+  background: linear-gradient(90deg, rgba(56,189,248,0.3), rgba(129,140,248,0.3));
+}
+
+.prob {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(56, 189, 248, 0.7);
+  width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: rgba(56,189,248,0.08);
+}
+
+/* Qubit cards */
+.qubitGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qubitCard {
+  background: rgba(56, 189, 248, 0.04);
+  border: 1px solid rgba(56, 189, 248, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.qubitCardTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(56, 189, 248, 0.6);
+  margin-bottom: 8px;
+}
+
+.qubitBarRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.qubitState {
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  color: rgba(240, 249, 255, 0.6);
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.bar0 {
+  background: linear-gradient(90deg, #34D399, #10B981);
+}
+
+.bar1 {
+  background: linear-gradient(90deg, #F87171, #EF4444);
+}
