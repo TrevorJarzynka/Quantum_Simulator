@@ -94,32 +94,29 @@ export class QuantumSimulator {
    */
   applyControlledGate(state, gateMatrix, controlQubit, targetQubit, numQubits) {
     const size = Math.pow(2, numQubits);
-    const newState = [...state];
-    
+    // Deep copy so reads of state[flippedIndex] always use original amplitudes
+    const orig = state.map(c => ({ re: c.re, im: c.im }));
+    const newState = state.map(c => ({ re: c.re, im: c.im }));
+
     for (let i = 0; i < size; i++) {
-      // Check if control qubit is 1
       const controlValue = (i >> controlQubit) & 1;
-      
-      if (controlValue === 1) {
-        // Apply gate to target qubit
-        const targetValue = (i >> targetQubit) & 1;
-        const flippedIndex = i ^ (1 << targetQubit);
-        
-        if (targetValue === 0) {
-          const temp = { ...state[i] };
-          newState[i] = ComplexMath.add(
-            ComplexMath.multiply(gateMatrix[0][0], temp),
-            ComplexMath.multiply(gateMatrix[0][1], state[flippedIndex])
-          );
-          newState[flippedIndex] = ComplexMath.add(
-            ComplexMath.multiply(gateMatrix[1][0], temp),
-            ComplexMath.multiply(gateMatrix[1][1], state[flippedIndex])
-          );
-        }
-      }
+      if (controlValue !== 1) continue;
+
+      const targetValue = (i >> targetQubit) & 1;
+      // Only process when target bit is 0 so each pair (i, flippedIndex) is handled once
+      if (targetValue !== 0) continue;
+
+      const flippedIndex = i ^ (1 << targetQubit);
+      newState[i] = ComplexMath.add(
+        ComplexMath.multiply(gateMatrix[0][0], orig[i]),
+        ComplexMath.multiply(gateMatrix[0][1], orig[flippedIndex])
+      );
+      newState[flippedIndex] = ComplexMath.add(
+        ComplexMath.multiply(gateMatrix[1][0], orig[i]),
+        ComplexMath.multiply(gateMatrix[1][1], orig[flippedIndex])
+      );
     }
-    
-    // Copy back to original state
+
     for (let i = 0; i < size; i++) {
       state[i] = newState[i];
     }
@@ -134,20 +131,18 @@ export class QuantumSimulator {
    */
   applySwapGate(state, qubit1, qubit2, numQubits) {
     const size = Math.pow(2, numQubits);
-    const newState = [...state];
-    
+    const orig = state.map(c => ({ re: c.re, im: c.im }));
+    const newState = state.map(c => ({ re: c.re, im: c.im }));
+
     for (let i = 0; i < size; i++) {
       const bit1 = (i >> qubit1) & 1;
       const bit2 = (i >> qubit2) & 1;
-      
       if (bit1 !== bit2) {
-        // Swap the amplitudes
         const swappedIndex = i ^ (1 << qubit1) ^ (1 << qubit2);
-        newState[swappedIndex] = state[i];
+        newState[swappedIndex] = { re: orig[i].re, im: orig[i].im };
       }
     }
-    
-    // Copy back to original state
+
     for (let i = 0; i < size; i++) {
       state[i] = newState[i];
     }
@@ -200,6 +195,10 @@ export class QuantumSimulator {
           } else if (gate.id === 'cz') {
             this.applyControlledGate(state, GATE_MATRICES.z, qubit, targetGate.qubit, numQubits);
             gateDescriptions.push(`CZ with control=${qubit}, target=${targetGate.qubit}`);
+          } else if (gate.id === 'cp') {
+            // Controlled-Phase (π/2 by default)
+            this.applyControlledGate(state, GATE_MATRICES.s, qubit, targetGate.qubit, numQubits);
+            gateDescriptions.push(`CP with control=${qubit}, target=${targetGate.qubit}`);
           }
           
           if (this.debugMode) {

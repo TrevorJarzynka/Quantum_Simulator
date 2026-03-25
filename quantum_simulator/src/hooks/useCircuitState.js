@@ -9,6 +9,8 @@ export const useCircuitState = (numQubits = 3, maxDepth = 10) => {
   const [circuit, setCircuit] = useState([]);
   const [selectedGate, setSelectedGate] = useState(null);
   const [initialStates, setInitialStates] = useState([]);
+  // Tracks the first click of a two-qubit gate placement (the control qubit)
+  const [pendingMultiQubitGate, setPendingMultiQubitGate] = useState(null);
 
   // Initialize circuit when parameters change
   useEffect(() => {
@@ -40,19 +42,8 @@ export const useCircuitState = (numQubits = 3, maxDepth = 10) => {
    */
   const placeGate = useCallback((row, col, gate) => {
     setCircuit(prevCircuit => {
-      const newCircuit = prevCircuit.map(row => [...row]);
-      
-      // Handle multi-qubit gates
-      if (gate.control || gate.target) {
-        // For multi-qubit gates, we need to handle placement logic
-        // This is a simplified version - in a full implementation,
-        // you'd want more sophisticated multi-qubit gate placement
-        newCircuit[row][col] = { gate: { ...gate, control: gate.control } };
-      } else {
-        // Single qubit gate
-        newCircuit[row][col] = { gate };
-      }
-      
+      const newCircuit = prevCircuit.map(r => [...r]);
+      newCircuit[row][col] = { gate };
       return newCircuit;
     });
   }, []);
@@ -75,18 +66,63 @@ export const useCircuitState = (numQubits = 3, maxDepth = 10) => {
    */
   const clearCircuit = useCallback(() => {
     initializeCircuit();
+    setPendingMultiQubitGate(null);
   }, [initializeCircuit]);
 
+  // Clear pending gate when selected gate changes
+  useEffect(() => {
+    if (pendingMultiQubitGate) {
+      // Remove the dangling control if user switched gates
+      setCircuit(prevCircuit => {
+        const newCircuit = prevCircuit.map(r => [...r]);
+        newCircuit[pendingMultiQubitGate.row][pendingMultiQubitGate.col] = { gate: null };
+        return newCircuit;
+      });
+      setPendingMultiQubitGate(null);
+    }
+  }, [selectedGate]); // eslint-disable-line react-hooks/exhaustive-deps
+
   /**
-   * Handle cell click in circuit editor
+   * Handle cell click in circuit editor.
+   * Multi-qubit gates use a two-step flow: first click = control, second click = target.
    * @param {number} row - Qubit index
    * @param {number} col - Time step index
    */
   const handleCellClick = useCallback((row, col) => {
-    if (selectedGate) {
+    if (!selectedGate) return;
+
+    const isMultiQubit = selectedGate.control && selectedGate.target;
+
+    if (!isMultiQubit) {
       placeGate(row, col, selectedGate);
+      return;
     }
-  }, [selectedGate, placeGate]);
+
+    // Two-step multi-qubit gate placement
+    if (!pendingMultiQubitGate) {
+      // First click: place the control marker
+      placeGate(row, col, { ...selectedGate, target: false });
+      setPendingMultiQubitGate({ row, col });
+    } else if (pendingMultiQubitGate.col === col && pendingMultiQubitGate.row !== row) {
+      // Second click in the same column, different row: place the target
+      placeGate(row, col, { ...selectedGate, control: false });
+      setPendingMultiQubitGate(null);
+    } else {
+      // Different column or same cell: cancel the pending control and start fresh
+      setCircuit(prevCircuit => {
+        const newCircuit = prevCircuit.map(r => [...r]);
+        newCircuit[pendingMultiQubitGate.row][pendingMultiQubitGate.col] = { gate: null };
+        return newCircuit;
+      });
+      // Start a new control at the clicked position (unless clicking the same cell to cancel)
+      if (pendingMultiQubitGate.row !== row || pendingMultiQubitGate.col !== col) {
+        placeGate(row, col, { ...selectedGate, target: false });
+        setPendingMultiQubitGate({ row, col });
+      } else {
+        setPendingMultiQubitGate(null);
+      }
+    }
+  }, [selectedGate, pendingMultiQubitGate, placeGate]);
 
   /**
    * Update initial state of a specific qubit
@@ -167,7 +203,7 @@ export const useCircuitState = (numQubits = 3, maxDepth = 10) => {
       isValid: errors.length === 0,
       errors
     };
-  }, [circuit, maxDepth, getGatesInColumn]);
+  }, [maxDepth, getGatesInColumn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Export circuit to JSON format
@@ -213,7 +249,8 @@ export const useCircuitState = (numQubits = 3, maxDepth = 10) => {
     circuit,
     selectedGate,
     initialStates,
-    
+    pendingMultiQubitGate,
+
     // Actions
     setSelectedGate,
     placeGate,
@@ -221,14 +258,14 @@ export const useCircuitState = (numQubits = 3, maxDepth = 10) => {
     clearCircuit,
     handleCellClick,
     updateInitialState,
-    
+
     // Utilities
     hasGates,
     getGatesInColumn,
     validateCircuit,
     exportCircuit,
     importCircuit,
-    
+
     // Circuit properties
     numQubits,
     maxDepth

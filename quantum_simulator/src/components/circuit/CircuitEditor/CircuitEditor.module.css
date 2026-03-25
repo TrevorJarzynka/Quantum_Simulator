@@ -161,6 +161,43 @@
   opacity: 1;
 }
 
+.pendingHint {
+  font-size: var(--font-size-sm);
+  color: #f39c12;
+  background: rgba(243, 156, 18, 0.1);
+  border: 1px solid rgba(243, 156, 18, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 6px 12px;
+  margin-bottom: var(--space-2);
+  text-align: center;
+}
+
+.pendingCell {
+  outline: 2px solid #f39c12;
+  border-radius: var(--radius-lg);
+}
+
+.controlSymbol {
+  font-size: 10px;
+  color: white;
+  line-height: 1;
+}
+
+.targetSymbol {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  line-height: 1;
+}
+
+.roleLabel {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .qubitRow { height: 60px; }
   .qubitLabel { width: 60px; height: 60px; font-size: var(--font-size-sm); }

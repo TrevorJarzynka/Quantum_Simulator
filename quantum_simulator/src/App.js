@@ -211,11 +211,12 @@ function App() {
               isLoading={isLoading}
               error={qiskitIntegration.error}
             />
-            <CircuitEditor 
+            <CircuitEditor
               circuit={circuitState.circuit}
               onCellClick={circuitState.handleCellClick}
               onRemoveGate={circuitState.removeGate}
               selectedGate={circuitState.selectedGate}
+              pendingMultiQubitGate={circuitState.pendingMultiQubitGate}
             />
             <SimulationControls 
               onRun={handleRunSimulation}
