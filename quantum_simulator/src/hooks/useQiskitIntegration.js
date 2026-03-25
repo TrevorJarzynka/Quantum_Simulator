@@ -18,7 +18,7 @@ export const useQiskitIntegration = () => {
   // Initialize backends on mount
   useEffect(() => {
     fetchBackends();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Fetch available Qiskit backends
